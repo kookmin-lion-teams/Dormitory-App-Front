@@ -1,6 +1,6 @@
 import { View, Text, Button } from "react-native";
 
-const ProfileScreen = ({ navigation, route }) => {
+const SleepoverScreen = ({ navigation, route }) => {
   return <Text>This is {route.params.name}'s profile</Text>;
 };
-export default ProfileScreen;
+export default SleepoverScreen;

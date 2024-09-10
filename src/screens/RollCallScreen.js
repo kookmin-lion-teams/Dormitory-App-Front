@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Button } from "react-native";
 import * as Location from "expo-location";
 
-const LocationScreen = () => {
+const RollCallScreen = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
@@ -33,4 +33,4 @@ const LocationScreen = () => {
   );
 };
 
-export default LocationScreen;
+export default RollCallScreen;
