@@ -8,6 +8,6 @@ const vars = {
   margin_top: height * 0.05,
   width_90: width * 0.9,
   button_radius: 6,
-  message_color: "#575757",
+  message_color: "#b3b3b3",
 };
 export default vars;
