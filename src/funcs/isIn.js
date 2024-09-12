@@ -7,7 +7,7 @@ const crossProduct = (point1, point2, point3) => {
 };
 
 // 주어진 좌표가 삼각형 안에 있는지 확인하는 함수
-const isPointInTriangle = (lat, lng) => {
+export const isPointInTriangle = (lat, lng) => {
   const point = { latitude: lat, longitude: lng };
   const vertexA = { latitude: 37.611835, longitude: 127.005432 }; //위쪽 꼭지점
   const vertexB = { latitude: 37.611308, longitude: 127.005298 }; //왼쪽 꼭지점
