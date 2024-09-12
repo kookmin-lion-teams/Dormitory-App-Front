@@ -1,7 +1,6 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
 import vars from "../vars";
-import MediumText from "./MediumText";
 const BlueButton = (props) => {
   return (
     <TouchableOpacity
