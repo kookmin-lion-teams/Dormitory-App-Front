@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as Font from "expo-font";
-
+// 아래는 스크린들
 import HomeScreen from "./src/screens/HomeScreen";
 import SleepoverScreen from "./src/screens/SleepoverScreen";
 import RollCallScreen from "./src/screens/RollCallScreen";
+import RollCall2 from "./src/screens/RollCall2";
+import RollCall3 from "./src/screens/RollCall3";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +63,8 @@ export default function App() {
           component={RollCallScreen}
           options={{ title: "" }}
         />
+        <Stack.Screen name="RollCall2" component={RollCall2} options={{ title: "" }} />
+        <Stack.Screen name="RollCall3" component={RollCall3} options={{ title: "" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
