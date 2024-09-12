@@ -44,14 +44,23 @@ export default function App() {
   // sleepover : 외박 / roll call : 점호
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: "white" }, // 헤더 배경색
+          contentStyle: { backgroundColor: "white" }, // 전체 화면 배경색
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "Home", headerShown: false }}
+          options={{ title: "", headerShown: false }}
         />
         <Stack.Screen name="Sleepover" component={SleepoverScreen} />
-        <Stack.Screen name="RollCall" component={RollCallScreen} />
+        <Stack.Screen
+          name="RollCall"
+          component={RollCallScreen}
+          options={{ title: "" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
