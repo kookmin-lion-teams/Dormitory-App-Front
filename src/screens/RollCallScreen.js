@@ -1,34 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import * as Location from "expo-location";
+import { useNavigation } from "@react-navigation/native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BlueButton from "../components/BlueButton";
-// import SVG_LOGO from "../../assets/kook_logo.svg";
 const RollCallScreen = () => {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const navigation = useNavigation();
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`;
-  }
-  const fetchLoc = () => {
-    // 휴대폰에서 위치정보 액세스 허용받는 코드
-
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let loc = await Location.getCurrentPositionAsync({});
-      setLocation(loc);
-    })();
-  };
   return (
     <View style={styles.outerContainer}>
       <View style={styles.innerContainer}>
@@ -47,11 +25,12 @@ const RollCallScreen = () => {
           <MediumText>23:00 ~ 23:30</MediumText>
         </View>
         <View style={[styles.width]}>
-          <BlueButton onPress={fetchLoc}>
+          <BlueButton onPress={() => navigation.navigate("RollCall2")}>
             <MediumText style={styles.buttonText}>오늘 점호 참여하기</MediumText>
           </BlueButton>
         </View>
       </View>
+      {/* 유의사항 */}
       <View style={styles.messageContainer}>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
           <Image
@@ -81,7 +60,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "space-between", // 추가
+    justifyContent: "space-between",
   },
   innerContainer: {
     marginTop: vars.margin_top,
