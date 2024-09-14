@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     marginBottom: vars.margin_top,
+    borderRadius: vars.button_radius,
   },
   buttonText: { color: "white", textAlign: "center", fontSize: 16 },
   messageText: { color: vars.message_color },
