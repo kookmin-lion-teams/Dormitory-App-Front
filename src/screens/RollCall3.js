@@ -8,33 +8,37 @@ import CameraExample from "./CameraExample";
 
 const RollCall3 = () => {
   const [imgs, setImgs] = useState([null, null, null, null]);
+  const [selectedArea, setSelectedArea] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [level, setLevel] = useState(0);
-
-  const areas = ["책상", "침대", "바닥", "배수구"];
-
   const clickHandler = (where) => {
     setSelectedArea(where);
-    setIsCameraOpen(true);
+    setIsCameraOpen(true); // 카메라를 열도록 설정
   };
 
   const onPhotoTaken = (photoUri) => {
     setIsCameraOpen(false);
-    const index = areas.indexOf(selectedArea);
-    if (index !== -1) {
-      setImgs((prevImgs) => {
-        const newImgs = [...prevImgs];
-        newImgs[index] = photoUri;
-        return newImgs;
-      });
-    }
-  };
+    const newImgs = [...imgs];
 
+    if (selectedArea === "책상") {
+      newImgs[0] = photoUri; // photoUri 문자열로 저장
+    } else if (selectedArea === "침대") {
+      newImgs[1] = photoUri; // photoUri 문자열로 저장
+    } else if (selectedArea === "바닥") {
+      newImgs[2] = photoUri; // photoUri 문자열로 저장
+    } else if (selectedArea === "배수구") {
+      newImgs[3] = photoUri; // photoUri 문자열로 저장
+    }
+
+    setImgs(newImgs);
+  };
   const submitHandler = () => {
-    if (level === 0 && imgs[0] && imgs[1]) {
+    if (level == 0 && imgs[0] && imgs[1]) {
       setLevel(1);
-    } else if (level === 1 && imgs[2] && imgs[3]) {
-      // API 요청 및 RollCall4로 이동 로직 추가 예정
+    } else if (level == 1 && imgs[2] && imgs[3]) {
+      // api 요청으로 사진을 보낸 후
+      //다음 페이지 RollCall4 로 이동
+      // 여기는 api가 나오면 구현할 예정!
     } else if (
       (level === 0 && (!imgs[0] || imgs[1])) ||
       (level === 1 && (!imgs[2] || imgs[3]))
@@ -42,28 +46,8 @@ const RollCall3 = () => {
       //사진을 찍지 않고 버튼을 눌렀을때
     }
   };
-
-  const renderCameraSection = (area, index, description) => (
-    <View key={index}>
-      <BoldText style={styles.smallText}>{area}</BoldText>
-      <MediumText>{description}</MediumText>
-      {imgs[index] ? (
-        <View style={styles.cameraContainer}>
-          <Image source={{ uri: imgs[index] }} style={styles.cameraImage} />
-        </View>
-      ) : (
-        <TouchableOpacity
-          style={styles.cameraContainer}
-          onPress={() => clickHandler(area)}
-        >
-          <Image source={require("../../assets/camera.png")} style={styles.cameraIcon} />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-
   return isCameraOpen ? (
-    <CameraExample onPhotoTaken={onPhotoTaken} />
+    <CameraExample onPhotoTaken={onPhotoTaken} /> // 사진을 찍은 후 콜백
   ) : (
     <View style={styles.outerContainer}>
       {/* header section */}
@@ -73,29 +57,103 @@ const RollCall3 = () => {
       </View>
       {/* notice section */}
       <View style={styles.messageContainer}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image source={require("../../assets/notice.png")} style={styles.noticeIcon} />
+        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+          <Image
+            source={require("../../assets/notice.png")} // 로컬 이미지 불러오기
+            style={styles.noticeIcon}
+          />
           <MediumText style={styles.messageText}>
             청소 상태가 불량할 경우, 담당자가 직접 재점검합니다.
           </MediumText>
         </View>
       </View>
       {/* camera section */}
-      <View style={styles.width}>
-        {level === 0 ? (
-          <>
-            <BoldText style={styles.smallText}>1. 공통 구역</BoldText>
-            {renderCameraSection("책상", 0, "책상 윗면 전체가 보이도록 촬영하세요")}
-            {renderCameraSection("침대", 1, "침대와 침구류 전체가 보이도록 촬영하세요")}
-          </>
-        ) : (
-          <>
-            <BoldText style={styles.smallText}>2. 담당 구역 (샤워장)</BoldText>
-            {renderCameraSection("바닥", 2, "샤워장 바닥 전체가 보이도록 촬영하세요")}
-            {renderCameraSection("배수구", 3, "배수구의 상태가 보이도록 촬영하세요")}
-          </>
-        )}
-      </View>
+      {level == 0 ? (
+        <View style={styles.width}>
+          <BoldText style={styles.smallText}>1. 공통 구역</BoldText>
+          <View>
+            <BoldText style={styles.smallText}>책상</BoldText>
+            <MediumText>책상 윗면 전체가 보이도록 촬영하세요</MediumText>
+            {imgs[0] ? (
+              <View style={styles.cameraContainer}>
+                <Image source={{ uri: imgs[0] }} style={styles.cameraImage} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.cameraContainer}
+                onPress={() => clickHandler("책상")}
+              >
+                <Image
+                  source={require("../../assets/camera.png")}
+                  style={styles.cameraIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View>
+            <BoldText style={styles.smallText}>침대</BoldText>
+            <MediumText>침대와 침구류 전체가 보이도록 촬영하세요</MediumText>
+            {imgs[1] ? (
+              <View style={styles.cameraContainer}>
+                <Image source={{ uri: imgs[1] }} style={styles.cameraImage} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.cameraContainer}
+                onPress={() => clickHandler("침대")}
+              >
+                <Image
+                  source={require("../../assets/camera.png")}
+                  style={styles.cameraIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      ) : (
+        <View style={styles.width}>
+          <BoldText style={styles.smallText}>2. 담당 구역 (샤워장)</BoldText>
+          <View>
+            <BoldText style={styles.smallText}>바닥</BoldText>
+            <MediumText>샤워장 바닥 전체가 보이도록 촬영하세요</MediumText>
+            {imgs[2] ? (
+              <View style={styles.cameraContainer}>
+                <Image source={{ uri: imgs[2] }} style={styles.cameraImage} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.cameraContainer}
+                onPress={() => clickHandler("바닥")}
+              >
+                <Image
+                  source={require("../../assets/camera.png")}
+                  style={styles.cameraIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View>
+            <BoldText style={styles.smallText}>배수구</BoldText>
+            <MediumText>배수구의 상태가 보이도록 촬영하세요</MediumText>
+            {imgs[3] ? (
+              <View style={styles.cameraContainer}>
+                <Image source={{ uri: imgs[3] }} style={styles.cameraImage} />
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.cameraContainer}
+                onPress={() => clickHandler("배수구")}
+              >
+                <Image
+                  source={require("../../assets/camera.png")}
+                  style={styles.cameraIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
+
       {/* button section */}
       <View style={[styles.width, { marginBottom: vars.margin_top }]}>
         <BlueButton onPress={submitHandler}>
@@ -110,6 +168,7 @@ const styles = StyleSheet.create({
   outerContainer: {
     width: "100%",
     height: "100%",
+    display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
@@ -119,6 +178,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     backgroundColor: vars.background_color,
+    display: "flex",
     flexDirection: "column",
     width: vars.width_90,
     paddingVertical: 15,
@@ -134,6 +194,7 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     backgroundColor: vars.background_color,
     borderRadius: vars.button_radius,
+    display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
