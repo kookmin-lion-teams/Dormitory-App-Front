@@ -5,8 +5,11 @@ import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
 import BlueButton from "../components/BlueButton";
 import CameraExample from "./CameraExample";
+import { useNavigation } from "@react-navigation/native";
 
 const RollCall3 = () => {
+  const navigation = useNavigation(); // navigation 정의
+
   const [imgs, setImgs] = useState([null, null, null, null]);
   const [selectedArea, setSelectedArea] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -33,18 +36,19 @@ const RollCall3 = () => {
     setImgs(newImgs);
   };
   const submitHandler = () => {
-    if (level == 0 && imgs[0] && imgs[1]) {
-      setLevel(1);
-    } else if (level == 1 && imgs[2] && imgs[3]) {
-      // api 요청으로 사진을 보낸 후
-      //다음 페이지 RollCall4 로 이동
-      // 여기는 api가 나오면 구현할 예정!
-    } else if (
-      (level === 0 && (!imgs[0] || imgs[1])) ||
-      (level === 1 && (!imgs[2] || imgs[3]))
-    ) {
-      //사진을 찍지 않고 버튼을 눌렀을때
-    }
+    navigation.navigate("RollCall4");
+    // if (level == 0 && imgs[0] && imgs[1]) {
+    //   setLevel(1);
+    // } else if (level == 1 && imgs[2] && imgs[3]) {
+    //   // api 요청으로 사진을 보낸 후
+    //   //다음 페이지 RollCall4 로 이동
+    //   // 여기는 api가 나오면 구현할 예정!
+    // } else if (
+    //   (level === 0 && (!imgs[0] || imgs[1])) ||
+    //   (level === 1 && (!imgs[2] || imgs[3]))
+    // ) {
+    //   //사진을 찍지 않고 버튼을 눌렀을때
+    // }
   };
   return isCameraOpen ? (
     <CameraExample onPhotoTaken={onPhotoTaken} /> // 사진을 찍은 후 콜백
