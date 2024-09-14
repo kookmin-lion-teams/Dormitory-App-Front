@@ -9,7 +9,8 @@ import SleepoverScreen from "./src/screens/SleepoverScreen";
 import RollCallScreen from "./src/screens/RollCallScreen";
 import RollCall2 from "./src/screens/RollCall2";
 import RollCall3 from "./src/screens/RollCall3";
-import CameraExample from "./src/screens/CameraExample";
+import RollCall4 from "./src/screens/RollCall4";
+
 const Stack = createNativeStackNavigator();
 
 const fetchFonts = () => {
@@ -65,6 +66,7 @@ export default function App() {
         />
         <Stack.Screen name="RollCall2" component={RollCall2} options={{ title: "" }} />
         <Stack.Screen name="RollCall3" component={RollCall3} options={{ title: "" }} />
+        <Stack.Screen name="RollCall4" component={RollCall4} options={{ title: "" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
