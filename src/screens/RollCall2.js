@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
+import BoldText from "../components/BoldText";
 import BlueButton from "../components/BlueButton";
 import { isPointInTriangle } from "../funcs/isIn";
 
@@ -43,7 +44,7 @@ const RollCall2 = () => {
         setIsLoading(false);
         setIsIn(isIn);
         if (isIn) {
-          setMsg("위치가 확인되었습니다.");
+          setMsg("홍길동 님의 위치가 확인되었습니다.");
         } else {
           setMsg("기숙사 안에서 점호를 진행해주세요");
         }
@@ -54,10 +55,19 @@ const RollCall2 = () => {
   return (
     <View style={styles.outerContainer}>
       <View style={[styles.width, { marginTop: vars.margin_top }]}>
-        <MediumText>{msg}</MediumText>
-        <MediumText>{isIn ? "맞다!" : "아니다!"}</MediumText>
+        <BoldText>{msg}</BoldText>
+        {/* <MediumText>{isIn ? "맞다!" : "아니다!"}</MediumText> */}
       </View>
-      <View style={[styles.width, styles.animeContainer]}></View>
+      <View style={styles.animeContainer}>
+        {isLoading ? (
+          <Image
+            source={require("../../assets/loading.gif")} // 로컬 이미지 불러오기
+            style={styles.loading}
+          />
+        ) : (
+          <></>
+        )}
+      </View>
       {!isLoading && (
         <View style={styles.width}>
           <BlueButton style={{ marginBottom: vars.margin_top }}>
@@ -88,8 +98,9 @@ const styles = StyleSheet.create({
   width: {
     width: vars.width_90,
   },
-  animeContainer: {},
+  animeContainer: { display: "flex", flexDirection: "row", alignItems: "center" },
   buttonText: { color: "white", textAlign: "center", fontSize: 16 },
+  loading: { width: 300, aspectRatio: 1 },
 });
 
 export default RollCall2;
