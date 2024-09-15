@@ -7,6 +7,8 @@ import * as Font from "expo-font";
 import HomeScreen from "./src/screens/HomeScreen";
 import SleepoverScreen from "./src/screens/SleepoverScreen";
 import RollCallScreen from "./src/screens/RollCallScreen";
+import SleepoverReason from "./src/screens/SleepoverReason";
+import SleepoverCheck from "./src/screens/SleepoverCheck";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,7 +57,21 @@ export default function App() {
           component={HomeScreen}
           options={{ title: "", headerShown: false }}
         />
-        <Stack.Screen name="Sleepover" component={SleepoverScreen} />
+        <Stack.Screen
+          name="Sleepover"
+          component={SleepoverScreen}
+          options={{ title: "외박일 선택" }}
+        />
+        <Stack.Screen
+          name="SleepoverReason"
+          component={SleepoverReason}
+          options={{ title: "외박 사유", headerBackTitleVisible: false }}
+        />
+        <Stack.Screen
+          name="SleepoverCheck"
+          component={SleepoverCheck}
+          options={{ title: "신청 정보 확인", headerBackTitleVisible: false }}
+        />
         <Stack.Screen
           name="RollCall"
           component={RollCallScreen}
