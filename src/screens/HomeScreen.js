@@ -1,120 +1,148 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  Pressable,
-  Platform,
-} from "react-native";
+import { StyleSheet, View, Dimensions, Image } from "react-native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
+import BoldText from "../components/BoldText";
+import WhiteButton from "../components/WhiteButton";
+import { useNavigation } from "@react-navigation/native";
+
 const { width, height } = Dimensions.get("window");
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
+  const navigation = useNavigation();
+
   return (
-    <View style={{ position: "relative" }}>
-      {/* 배경 */}
-      <View
-        style={[
-          {
-            height: "30%",
-            backgroundColor: vars.primary_color,
-          },
-          styles.background,
-        ]}
-      ></View>
-      <View
-        style={[
-          {
-            height: "70%",
-            backgroundColor: vars.background_color,
-          },
-          styles.background,
-        ]}
-      ></View>
-      {/* 컨텐츠 */}
-      <View style={styles.mainContainer}>
-        {/* 프로필 */}
-        <View style={[styles.profileContainer, styles.boxShadow]}>
-          <View style={{ flexDirection: "row" }}>
-            <Text>홍길동 </Text>
-            <Text>20240101</Text>
+    <View style={styles.container}>
+      {/* background logo section */}
+
+      <Image
+        source={require("../../assets/logo.png")}
+        style={{
+          position: "absolute",
+          zIndex: -5,
+          width: width * 0.8,
+          height: width * 0.8,
+          top: 150,
+          left: 140,
+        }}
+      />
+
+      {/* profile section */}
+      <View style={styles.profileSection}>
+        <View style={styles.width}>
+          <View style={styles.nameContainer}>
+            <BoldText style={styles.nameText}>홍길동</BoldText>
+            <BoldText style={styles.greetingText}> 님</BoldText>
           </View>
-          <Text>무슨 대학 무슨 과</Text>
-          <Text>정릉 생활관 101호</Text>
+          <BoldText style={styles.greetingText}>안녕하세요!</BoldText>
         </View>
-        {/* 버튼 */}
+        <View style={styles.width}>
+          <BoldText>정릉 생활관</BoldText>
+          <BoldText>101호</BoldText>
+        </View>
+      </View>
+      {/* button section */}
+      <View style={styles.buttonSection}>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.boxShadow]}
-            onPress={() => navigation.navigate("Sleepover", { name: "Jane" })}
-          >
-            <MediumText style={styles.buttonText}>외박 신청</MediumText>
-          </TouchableOpacity>
-          <Pressable
-            style={[styles.button, styles.boxShadow]}
-            onPress={() => navigation.navigate("RollCall")}
-          >
-            <MediumText style={styles.buttonText}>점호</MediumText>
-          </Pressable>
+          {/* 출입증 */}
+          <WhiteButton style={styles.halfButton} onPress={() => navigation.navigate("/")}>
+            <BoldText>출입증</BoldText>
+          </WhiteButton>
+          {/* 점호, 외박 */}
+          <View style={styles.doubleButtonContainer}>
+            <WhiteButton
+              style={styles.halfHeightButton}
+              onPress={() => navigation.navigate("RollCall")}
+            >
+              <BoldText>점호</BoldText>
+            </WhiteButton>
+            <WhiteButton
+              style={styles.halfHeightButton}
+              onPress={() => navigation.navigate("/")}
+            >
+              <BoldText>외박신청</BoldText>
+            </WhiteButton>
+          </View>
         </View>
+        <WhiteButton style={styles.fullWidthButton}>
+          <MediumText>공지사항</MediumText>
+        </WhiteButton>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    position: "absolute",
+  container: {
+    minWidth: width,
+    minHeight: "100%",
+    maxWidth: width,
+  },
+  profileSection: {
+    zIndex: -10,
+
     width: "100%",
-    height: "100%",
-    zIndex: 0,
+    flex: 4,
     display: "flex",
     flexDirection: "column",
+    justifyContent: "space-around",
     alignItems: "center",
-  },
-  backgroud: { position: "absolute", top: 0, zIndex: -10 },
-  profileContainer: {
-    marginTop: height * 0.25,
-    marginBottom: 20,
-    padding: 20,
-    width: "90%",
-    height: "35%",
+    paddingTop: vars.margin_top * 2.5,
     backgroundColor: "white",
-    borderRadius: 10,
+  },
+  width: {
+    width: vars.width_90,
+  },
+  nameContainer: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "flex-end",
+  },
+  nameText: {
+    color: vars.primary_color,
+    fontSize: 25,
+  },
+  greetingText: {
+    fontSize: 21,
+  },
+  buttonSection: {
+    width: "100%",
+    flex: 6,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: vars.background_color,
+    borderColor: "#DADADA",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    paddingTop: 20,
+    paddingBottom: vars.margin_top,
   },
   buttonContainer: {
-    display: "flex",
+    height: "84%",
     flexDirection: "row",
-    width: "90%",
+    justifyContent: "space-between",
+    width: vars.width_90,
+  },
+  halfButton: {
+    width: "48%",
+    height: "98%",
+  },
+  doubleButtonContainer: {
+    width: "48%",
+    height: "98%",
     justifyContent: "space-between",
   },
-  button: {
-    width: "50%",
-    aspectRatio: 1,
-    padding: 20,
-    backgroundColor: "white",
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
+  halfHeightButton: {
+    width: "100%",
+    height: "48%",
   },
-  buttonText: {
-    fontSize: 20,
-  },
-  boxShadow: {
-    ...Platform.select({
-      ios: {
-        shadowColor: "rgba(0, 0, 0, 0.2)", // 그림자 색상 및 불투명도
-        shadowOffset: { width: 0, height: 0 }, // x, y 축으로의 그림자 오프셋
-        shadowOpacity: 1, // 그림자의 불투명도 (rgba에서 a값이 이미 0.2이므로 1로 설정)
-        shadowRadius: 10, // 그림자의 반경
-      },
-      android: {
-        elevation: 3, // 비슷한 그림자 효과를 위한 안드로이드의 elevation 설정
-      },
-    }),
+  fullWidthButton: {
+    width: "90%",
+    height: "14%",
   },
 });
 

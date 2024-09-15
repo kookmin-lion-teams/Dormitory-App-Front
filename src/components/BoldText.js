@@ -1,13 +1,14 @@
 import React from "react";
 import { Text } from "react-native";
 
-const MediumText = (props) => {
+const BoldText = (props) => {
   return (
     <Text
       {...props}
       style={[
         {
-          fontFamily: "Pretendard-Medium",
+          fontFamily: "Pretendard-Bold",
+          fontSize: 18,
         },
         props.style, // 외부 스타일 덮어씌우기
       ]}
@@ -17,4 +18,4 @@ const MediumText = (props) => {
   );
 };
 
-export default MediumText;
+export default BoldText;

@@ -3,13 +3,12 @@ import { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as Font from "expo-font";
-
+// 아래는 스크린들
 import HomeScreen from "./src/screens/HomeScreen";
 import SleepoverScreen from "./src/screens/SleepoverScreen";
 import RollCallScreen from "./src/screens/RollCallScreen";
 import SleepoverReason from "./src/screens/SleepoverReason";
 import SleepoverCheck from "./src/screens/SleepoverCheck";
-
 import RollCall2 from "./src/screens/RollCall2";
 import RollCall3 from "./src/screens/RollCall3";
 import RollCall4 from "./src/screens/RollCall4";
@@ -22,7 +21,7 @@ const fetchFonts = () => {
     // Pretendard: require("./assets/fonts/PretendardVariable.ttf"),
     // "Pretendard-Light": require("./assets/fonts/Pretendard-Light.otf"),
     // "Pretendard-Black": require("./assets/fonts/Pretendard-Black.otf"),
-    // "Pretendard-Bold": require("./assets/fonts/Pretendard-Bold.otf"),
+    "Pretendard-Bold": require("./assets/fonts/Pretendard-Bold.otf"),
     // "Pretendard-ExtraBold": require("./assets/fonts/Pretendard-ExtraBold.otf"),
     // "Pretendard-Thin": require("./assets/fonts/Pretendard-Thin.otf"),
     // "Pretendard-ExtraLight": require("./assets/fonts/Pretendard-ExtraLight.otf"),
@@ -81,6 +80,9 @@ export default function App() {
           component={RollCallScreen}
           options={{ title: "" }}
         />
+        <Stack.Screen name="RollCall2" component={RollCall2} options={{ title: "" }} />
+        <Stack.Screen name="RollCall3" component={RollCall3} options={{ title: "" }} />
+        <Stack.Screen name="RollCall4" component={RollCall4} options={{ title: "" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
