@@ -10,6 +10,10 @@ import RollCallScreen from "./src/screens/RollCallScreen";
 import SleepoverReason from "./src/screens/SleepoverReason";
 import SleepoverCheck from "./src/screens/SleepoverCheck";
 
+import RollCall2 from "./src/screens/RollCall2";
+import RollCall3 from "./src/screens/RollCall3";
+import RollCall4 from "./src/screens/RollCall4";
+
 const Stack = createNativeStackNavigator();
 
 const fetchFonts = () => {
