@@ -5,27 +5,67 @@ import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
 import BlueButton from "../components/BlueButton";
+import { differenceInWeeks, parseISO } from "date-fns";
+
 const RollCallScreen = () => {
   const navigation = useNavigation();
   const [isWithinTimeRange, setIsWithinTimeRange] = useState(false);
-
+  const [weekNumber, setWeekNumber] = useState(0);
+  const [year, setYear] = useState(0);
+  const [month, setMonth] = useState(0);
+  const [nextMon, setNextMon] = useState("");
   useEffect(() => {
     const now = new Date();
+    // 두 날짜를 ISO 형식으로 설정
+    const date1 = parseISO("2024-09-02"); // 9월 2일 월요일
+    // const date2 = new Date(); // 오늘 날짜
+    const date2 = parseISO("2024-10-04"); // 10월 4일
+
+    // 두 날짜 사이의 주 차이를 계산
+    const weeksDifference = differenceInWeeks(date2, date1);
+    setWeekNumber(weeksDifference + 1);
+
+    // 현재 요일, 시간, 분 계산
+    const dayOfWeek = now.getDay(); // 0: 일요일, 1: 월요일 ... 6: 토요일
+    // 다음 월요일까지의 일수를 계산합니다. (월요일은 1이므로, 현재 요일이 월요일인 경우에는 7일을 더하여 다음 주 월요일을 구합니다.)
+    const daysUntilNextMonday = (1 - dayOfWeek + 7) % 7;
+    // 다음 월요일의 날짜를 계산합니다.
+    const nextMonday = new Date(now);
+    nextMonday.setDate(now.getDate() + daysUntilNextMonday);
+
+    // 날짜를 YYYY.MM.DD(요일) 형식으로 포맷합니다.
+    const year = nextMonday.getFullYear();
+    const mmonth = String(nextMonday.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 해주고, 두 자리로 포맷
+    const day = String(nextMonday.getDate()).padStart(2, "0"); // 일은 두 자리로 포맷
+
+    // 요일 배열을 정의합니다.
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+    const weekday = weekdays[nextMonday.getDay()];
+
+    // 최종 포맷 문자열
+    const formattedDate = `${year}.${mmonth}.${day}(${weekday})`;
+    // 다음 월요일의 날짜를 문자열로 포맷합니다.
+    setNextMon(formattedDate);
+    setYear(year);
+    const month = now.getMonth() + 1; // 월
+    setMonth(month);
+    const date = now.getDate(); // 일
+
     const hours = now.getHours(); // 시간
     const minutes = now.getMinutes(); // 분
-    const dayOfWeek = now.getDay(); // 요일 (0: 일요일, 6: 토요일)
-    // 월요일인지 확인 (dayOfWeek === 1)
+
+    // 월요일 23:00 ~ 23:30 사이인지 확인
     if (dayOfWeek === 1 && hours === 23 && minutes >= 0 && minutes <= 30) {
-      setIsWithinTimeRange(true); // 월요일 23:00 ~ 23:30 사이
+      setIsWithinTimeRange(true);
     } else {
-      setIsWithinTimeRange(false); // 해당 시간이 아님
+      setIsWithinTimeRange(false);
     }
   }, []);
   return (
     <View style={styles.outerContainer}>
       <View style={styles.innerContainer}>
         {/* header */}
-        <BoldText>정릉생활관 3주차 점호</BoldText>
+        <BoldText>정릉생활관 {weekNumber}주차 점호</BoldText>
 
         {/* image */}
         <Image source={require("../../assets/logo-nobg.png")} style={styles.image} />
@@ -33,7 +73,7 @@ const RollCallScreen = () => {
         {/* info */}
         <View style={[styles.width, styles.flexRow]}>
           <MediumText>점호 날짜</MediumText>
-          <MediumText>2020.20.20(수)</MediumText>
+          <MediumText>{nextMon}</MediumText>
         </View>
         <View style={[styles.width, styles.flexRow]}>
           <MediumText>점호 시간</MediumText>
