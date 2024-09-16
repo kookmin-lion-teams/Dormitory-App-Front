@@ -11,8 +11,7 @@ const RollCallScreen = () => {
   const navigation = useNavigation();
   const [isWithinTimeRange, setIsWithinTimeRange] = useState(false);
   const [weekNumber, setWeekNumber] = useState(0);
-  const [year, setYear] = useState(0);
-  const [month, setMonth] = useState(0);
+
   const [nextMon, setNextMon] = useState("");
   useEffect(() => {
     const now = new Date();
@@ -46,10 +45,6 @@ const RollCallScreen = () => {
     const formattedDate = `${year}.${mmonth}.${day}(${weekday})`;
     // 다음 월요일의 날짜를 문자열로 포맷합니다.
     setNextMon(formattedDate);
-    setYear(year);
-    const month = now.getMonth() + 1; // 월
-    setMonth(month);
-    const date = now.getDate(); // 일
 
     const hours = now.getHours(); // 시간
     const minutes = now.getMinutes(); // 분
