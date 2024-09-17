@@ -10,6 +10,7 @@ const vars = {
   width_90: width * 0.9,
   w_button_radius: 10,
   button_radius: 6,
+  back: "http://13.125.112.108:5000",
 };
 
 export default vars;
