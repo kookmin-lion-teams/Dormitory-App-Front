@@ -27,7 +27,21 @@ const LoginScreen = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        await AsyncStorage.setItem("student_info", data.student_info);
+        try {
+          await AsyncStorage.setItem("DEPARTMENT", data.student_info.DEPARTMENT);
+          await AsyncStorage.setItem("IN", data.student_info.IN.toString());
+          await AsyncStorage.setItem("MINUS", data.student_info.MINUS.toString());
+          await AsyncStorage.setItem("NAME", data.student_info.NAME);
+          await AsyncStorage.setItem("PHONE", data.student_info.PHONE);
+          await AsyncStorage.setItem("ROOM", data.student_info.ROOM);
+          await AsyncStorage.setItem("SEATNUM", data.student_info.SEATNUM.toString());
+          await AsyncStorage.setItem("SEX", data.student_info.SEX.toString());
+          await AsyncStorage.setItem("SID", data.student_info.SID.toString());
+          await AsyncStorage.setItem("SLEEPOVER", data.student_info.SLEEPOVER.toString());
+          await AsyncStorage.setItem("STNUM", data.student_info.STNUM.toString());
+        } catch (e) {
+          console.error("Error saving student info:", e);
+        }
         // HOME 화면으로 이동
         navigation.navigate("Home");
       } else {
