@@ -1,33 +1,90 @@
-import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
+import BoldText from "../components/BoldText";
 import BlueButton from "../components/BlueButton";
+import { differenceInWeeks, parseISO } from "date-fns";
+
 const RollCallScreen = () => {
   const navigation = useNavigation();
+  const [isWithinTimeRange, setIsWithinTimeRange] = useState(false);
+  const [weekNumber, setWeekNumber] = useState(0);
 
+  const [nextMon, setNextMon] = useState("");
+  useEffect(() => {
+    const now = new Date();
+    // 두 날짜를 ISO 형식으로 설정
+    const date1 = parseISO("2024-09-02"); // 9월 2일 월요일
+    // const date2 = new Date(); // 오늘 날짜
+    const date2 = parseISO("2024-10-04"); // 10월 4일
+
+    // 두 날짜 사이의 주 차이를 계산
+    const weeksDifference = differenceInWeeks(date2, date1);
+    setWeekNumber(weeksDifference + 1);
+
+    // 현재 요일, 시간, 분 계산
+    const dayOfWeek = now.getDay(); // 0: 일요일, 1: 월요일 ... 6: 토요일
+    // 다음 월요일까지의 일수를 계산합니다. (월요일은 1이므로, 현재 요일이 월요일인 경우에는 7일을 더하여 다음 주 월요일을 구합니다.)
+    const daysUntilNextMonday = (1 - dayOfWeek + 7) % 7;
+    // 다음 월요일의 날짜를 계산합니다.
+    const nextMonday = new Date(now);
+    nextMonday.setDate(now.getDate() + daysUntilNextMonday);
+
+    // 날짜를 YYYY.MM.DD(요일) 형식으로 포맷합니다.
+    const year = nextMonday.getFullYear();
+    const mmonth = String(nextMonday.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 해주고, 두 자리로 포맷
+    const day = String(nextMonday.getDate()).padStart(2, "0"); // 일은 두 자리로 포맷
+
+    // 요일 배열을 정의합니다.
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+    const weekday = weekdays[nextMonday.getDay()];
+
+    // 최종 포맷 문자열
+    const formattedDate = `${year}.${mmonth}.${day}(${weekday})`;
+    // 다음 월요일의 날짜를 문자열로 포맷합니다.
+    setNextMon(formattedDate);
+
+    const hours = now.getHours(); // 시간
+    const minutes = now.getMinutes(); // 분
+
+    // 월요일 23:00 ~ 23:30 사이인지 확인
+    if (dayOfWeek === 1 && hours === 23 && minutes >= 0 && minutes <= 30) {
+      setIsWithinTimeRange(true);
+    } else {
+      setIsWithinTimeRange(false);
+    }
+  }, []);
   return (
     <View style={styles.outerContainer}>
       <View style={styles.innerContainer}>
-        <MediumText>정릉생활관 3주차 점호</MediumText>
-        <Image
-          source={require("../../assets/logo-nobg.png")} // 로컬 이미지 불러오기
-          style={styles.image}
-        />
+        {/* header */}
+        <BoldText>정릉생활관 {weekNumber}주차 점호</BoldText>
 
+        {/* image */}
+        <Image source={require("../../assets/logo-nobg.png")} style={styles.image} />
+
+        {/* info */}
         <View style={[styles.width, styles.flexRow]}>
           <MediumText>점호 날짜</MediumText>
-          <MediumText>2020.20.20(수)</MediumText>
+          <MediumText>{nextMon}</MediumText>
         </View>
         <View style={[styles.width, styles.flexRow]}>
           <MediumText>점호 시간</MediumText>
           <MediumText>23:00 ~ 23:30</MediumText>
         </View>
+        {/* buton */}
         <View style={[styles.width]}>
-          <BlueButton onPress={() => navigation.navigate("RollCall2")}>
-            <MediumText style={styles.buttonText}>오늘 점호 참여하기</MediumText>
-          </BlueButton>
+          {isWithinTimeRange ? (
+            <BlueButton onPress={() => navigation.navigate("RollCall2")}>
+              <MediumText style={styles.buttonText}>오늘 점호 참여하기</MediumText>
+            </BlueButton>
+          ) : (
+            <TouchableOpacity disabled={!isWithinTimeRange} style={styles.grayButton}>
+              <MediumText style={styles.grayButtonText}>점호 시간이 아닙니다</MediumText>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       {/* 유의사항 */}
@@ -92,5 +149,17 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "white", textAlign: "center", fontSize: 16 },
   messageText: { color: vars.message_color },
+  grayButton: {
+    width: "100%",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    display: "flex",
+    justifyContent: "center",
+    borderRadius: vars.button_radius,
+    borderWidth: 1,
+    borderColor: "#979797",
+    borderStyle: "solid",
+  },
+  grayButtonText: { color: "#575757", textAlign: "center", fontSize: 16 },
 });
 export default RollCallScreen;

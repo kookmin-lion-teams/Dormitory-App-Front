@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as Font from "expo-font";
 // 아래는 스크린들
+import LoginScreen from "./src/screens/LoginScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import SleepoverScreen from "./src/screens/SleepoverScreen";
 import RollCallScreen from "./src/screens/RollCallScreen";
@@ -56,6 +57,11 @@ export default function App() {
           contentStyle: { backgroundColor: "white" }, // 전체 화면 배경색
         }}
       >
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ title: "", headerShown: false }}
+        />
         <Stack.Screen
           name="Home"
           component={HomeScreen}
