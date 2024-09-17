@@ -27,12 +27,7 @@ const LoginScreen = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        // 로그인 성공 시 response를 AsyncStorage에 저장
-        try {
-          await AsyncStorage.setItem("userToken", data.token);
-        } catch {
-          Alert.alert("AsyncStorage 저장 실패");
-        }
+        await AsyncStorage.setItem("student_info", data.student_info);
         // HOME 화면으로 이동
         navigation.navigate("Home");
       } else {
