@@ -45,7 +45,14 @@ const HomeScreen = () => {
       <View style={styles.buttonSection}>
         <View style={styles.buttonContainer}>
           {/* 출입증 */}
+< SleepoverReason
+          <WhiteButton
+            style={styles.halfButton}
+            onPress={() => navigation.navigate("/")}
+          >
+
           <WhiteButton style={styles.halfButton} onPress={() => navigation.navigate("")}>
+ main
             <BoldText>출입증</BoldText>
           </WhiteButton>
           {/* 점호, 외박 */}
