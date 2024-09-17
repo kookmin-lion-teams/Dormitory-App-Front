@@ -9,6 +9,7 @@ import SleepoverScreen from "./src/screens/SleepoverScreen";
 import RollCallScreen from "./src/screens/RollCallScreen";
 import SleepoverReason from "./src/screens/SleepoverReason";
 import SleepoverCheck from "./src/screens/SleepoverCheck";
+import SleepoverSuccess from "./src/screens/SleepoverSuccess";
 import RollCall2 from "./src/screens/RollCall2";
 import RollCall3 from "./src/screens/RollCall3";
 import RollCall4 from "./src/screens/RollCall4";
@@ -76,13 +77,30 @@ export default function App() {
           options={{ title: "신청 정보 확인", headerBackTitleVisible: false }}
         />
         <Stack.Screen
+          name="SleepoverSuccess"
+          component={SleepoverSuccess}
+          options={{ title: "", headerBackTitleVisible: false }}
+        />
+        <Stack.Screen
           name="RollCall"
           component={RollCallScreen}
           options={{ title: "" }}
         />
-        <Stack.Screen name="RollCall2" component={RollCall2} options={{ title: "" }} />
-        <Stack.Screen name="RollCall3" component={RollCall3} options={{ title: "" }} />
-        <Stack.Screen name="RollCall4" component={RollCall4} options={{ title: "" }} />
+        <Stack.Screen
+          name="RollCall2"
+          component={RollCall2}
+          options={{ title: "" }}
+        />
+        <Stack.Screen
+          name="RollCall3"
+          component={RollCall3}
+          options={{ title: "" }}
+        />
+        <Stack.Screen
+          name="RollCall4"
+          component={RollCall4}
+          options={{ title: "" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
