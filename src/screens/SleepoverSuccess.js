@@ -7,7 +7,7 @@ import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
 import BlueButton from "../components/BlueButton";
 
-const RollCall4 = () => {
+const SleepoverSuccess = () => {
   const navigation = useNavigation(); // navigation 정의
 
   return (
@@ -28,20 +28,18 @@ const RollCall4 = () => {
         </View>
         {/* text section */}
         <View style={styles.textContainer}>
-          <BoldText style={{ marginBottom: vars.margin_top }}>
-            점호가 완료되었어요
+          <BoldText style={{ marginBottom: vars.margin_top, fontSize: 24 }}>
+            외박 신청이 완료되었어요
           </BoldText>
-          <MediumText>n주차 점호에 정상적으로 참여했습니다.</MediumText>
-          <MediumText>
-            내역에 이상이 있을 경우 담당자에게 문의해주세요.
-          </MediumText>
+          <MediumText>담당자가 확인 후 외박 신청이 확정됩니다.</MediumText>
+          <MediumText>확정되면 알림을 통해 알려드릴게요.</MediumText>
         </View>
       </View>
 
       {/* button section */}
-      <View style={[styles.width, { gap: 10, marginBottom: vars.margin_top }]}>
+      <View style={[styles.width, { gap: 18, marginBottom: vars.margin_top }]}>
         <TouchableOpacity style={styles.grayButton}>
-          <MediumText style={styles.grayButtonText}>점호 내역 보기</MediumText>
+          <MediumText style={styles.grayButtonText}>신청 내역 보기</MediumText>
         </TouchableOpacity>
         <BlueButton
           onPress={() => {
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
   },
-  buttonText: { color: "white", textAlign: "center", fontSize: 16 },
+  buttonText: { color: "white", textAlign: "center", fontSize: 18 },
   grayButton: {
     width: "100%",
     paddingVertical: 15,
@@ -84,7 +82,7 @@ const styles = StyleSheet.create({
     borderColor: "#979797",
     borderStyle: "solid",
   },
-  grayButtonText: { color: "#575757", textAlign: "center", fontSize: 16 },
+  grayButtonText: { color: "#575757", textAlign: "center", fontSize: 18 },
 });
 
-export default RollCall4;
+export default SleepoverSuccess;
