@@ -35,8 +35,8 @@ const RollCall2 = () => {
 
         try {
           // 위치가 기숙사 안인지 확인
-          const isIn = await isPointInTriangle(lat, lng);
-          setIsIn((prev) => isIn);
+          const isInDor = await isPointInTriangle(lat, lng);
+          setIsIn(isInDor);
           console.log(isIn);
           //기숙사 안이라면 api 소통
           if (isIn) {
