@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
@@ -11,14 +11,13 @@ const RollCallScreen = () => {
   const navigation = useNavigation();
   const [isWithinTimeRange, setIsWithinTimeRange] = useState(false);
   const [weekNumber, setWeekNumber] = useState(0);
-
   const [nextMon, setNextMon] = useState("");
   useEffect(() => {
     const now = new Date();
     // 두 날짜를 ISO 형식으로 설정
     const date1 = parseISO("2024-09-02"); // 9월 2일 월요일
-    // const date2 = new Date(); // 오늘 날짜
-    const date2 = parseISO("2024-10-04"); // 10월 4일
+    const date2 = new Date(); // 오늘 날짜
+    // const date2 = parseISO("2024-10-04"); // 10월 4일
 
     // 두 날짜 사이의 주 차이를 계산
     const weeksDifference = differenceInWeeks(date2, date1);
@@ -53,9 +52,11 @@ const RollCallScreen = () => {
     if (dayOfWeek === 1 && hours === 23 && minutes >= 0 && minutes <= 30) {
       setIsWithinTimeRange(true);
     } else {
-      setIsWithinTimeRange(false);
+      // setIsWithinTimeRange(false);
+      setIsWithinTimeRange(true);
     }
   }, []);
+
   return (
     <View style={styles.outerContainer}>
       <View style={styles.innerContainer}>
@@ -77,7 +78,11 @@ const RollCallScreen = () => {
         {/* buton */}
         <View style={[styles.width]}>
           {isWithinTimeRange ? (
-            <BlueButton onPress={() => navigation.navigate("RollCall2")}>
+            <BlueButton
+              onPress={() => {
+                navigation.navigate("RollCall2");
+              }}
+            >
               <MediumText style={styles.buttonText}>오늘 점호 참여하기</MediumText>
             </BlueButton>
           ) : (
