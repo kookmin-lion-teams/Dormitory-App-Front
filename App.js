@@ -11,9 +11,12 @@ import RollCallScreen from "./src/screens/RollCallScreen";
 import SleepoverReason from "./src/screens/SleepoverReason";
 import SleepoverCheck from "./src/screens/SleepoverCheck";
 import SleepoverSuccess from "./src/screens/SleepoverSuccess";
+import SleepoverDetail from "./src/screens/SleepoverDetail";
+import Detail from "./src/screens/Detail";
 import RollCall2 from "./src/screens/RollCall2";
 import RollCall3 from "./src/screens/RollCall3";
 import RollCall4 from "./src/screens/RollCall4";
+import RollCallDetail from "./src/screens/RollCallDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +91,17 @@ export default function App() {
           options={{ title: "", headerBackTitleVisible: false }}
         />
         <Stack.Screen
+          name="SleepoverDetail"
+          component={SleepoverDetail}
+          options={{ title: "외박 신청 상세", headerBackTitleVisible: false }}
+        />
+        <Stack.Screen
+          name="Detail"
+          component={Detail}
+          options={{ title: "신청 내역", headerBackTitleVisible: false }}
+        />
+
+        <Stack.Screen
           name="RollCall"
           component={RollCallScreen}
           options={{ title: "" }}
@@ -106,6 +120,11 @@ export default function App() {
           name="RollCall4"
           component={RollCall4}
           options={{ title: "" }}
+        />
+        <Stack.Screen
+          name="RollCallDetail"
+          component={RollCallDetail}
+          options={{ title: "신청 내역", headerBackTitleVisible: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

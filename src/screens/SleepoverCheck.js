@@ -1,41 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import vars from "../vars";
 import BlueButton from "../components/BlueButton";
 import MediumText from "../components/MediumText";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const SleepoverCheck = ({ navigation, route }) => {
   const { reason, startDate, endDate } = route.params;
   const [sleepCount, setSleepCount] = useState(0);
 
-  useEffect(() => {
-    const fetchSleepCount = async () => {
-      try {
-        const count = await AsyncStorage.getItem("SLEEPCOUNT");
-        if (count !== null) {
-          setSleepCount(parseInt(count, 10)); // 신청 후 남은 횟수는 1회 감소
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchSleepCount = async () => {
+        try {
+          const count = await AsyncStorage.getItem("SLEEPCOUNT");
+          if (count !== null) {
+            setSleepCount(parseInt(count, 10));
+          }
+        } catch (error) {
+          console.error("남은 외박 횟수를 불러오는데 실패했습니다.", error);
         }
-      } catch (error) {
-        console.error("남은 외박 횟수를 불러오는데 실패했습니다.", error);
-      }
-    };
-
-    fetchSleepCount();
-  }, []);
+      };
+      fetchSleepCount();
+    }, [])
+  );
 
   const getDaysBetweenDates = (start, end) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
     const timeDiff = endDate - startDate;
-    const dayDiff = timeDiff / (1000 * 3600 * 24); // 하루의 밀리초로 나누어 날짜 차이를 계산
+    const dayDiff = timeDiff / (1000 * 3600 * 24);
     return dayDiff + 1; // 같은 날짜도 포함해야 하므로 +1
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>
-        {" "}
-        외박 신청 전{"\n"} 마지막으로 확인해주세요
+        외박 신청 전 마지막으로 확인해주세요
       </Text>
 
       <View style={styles.section}>
@@ -79,12 +81,11 @@ const SleepoverCheck = ({ navigation, route }) => {
 
       <View style={styles.noticeContainer}>
         <Image
-          source={require("../../assets/notice.png")} // 로컬 이미지 불러오기
+          source={require("../../assets/notice.png")}
           style={styles.noticeIcon}
         />
         <MediumText style={styles.noticeText}>
-          {" "}
-          외박 신청이 완료되면, {"\n"} 이번 학기에 남은 외박 가능 횟수는
+          외박 신청이 완료되면, 이번 학기에 남은 외박 가능 횟수는{" "}
           {3 - sleepCount}회입니다.
         </MediumText>
       </View>
@@ -110,7 +111,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#fff",
-    display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   },
@@ -124,8 +124,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginBottom: 20,
     paddingBottom: 20,
-    // borderBottomWidth: 1,
-    // borderBottomColor: "#E0E0E0",
   },
   row: {
     flexDirection: "row",
@@ -161,7 +159,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     marginBottom: 214,
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
   },
