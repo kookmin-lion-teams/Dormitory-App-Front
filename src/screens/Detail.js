@@ -27,6 +27,9 @@ const Detail = ({ navigation }) => {
         return;
       }
 
+      const sleepCount = await AsyncStorage.getItem("SLEEPCOUNT");
+      setSleepoverCount(sleepCount ? parseInt(sleepCount) : 0); // SLEEPCOUNT 설정
+
       // 서버에서 외박 신청 내역 가져오기
       const response = await fetch(vars.back + "/student/sleepover_list", {
         method: "POST",
@@ -43,9 +46,9 @@ const Detail = ({ navigation }) => {
         const sleepoverDetails = data.sleepover_list.map((item) => ({
           adate: item.ADATE,
           check: item.CHECK,
-          reason: item.REASON,
-          startDate: item.STARTDATE,
-          endDate: item.ENDDATE,
+          reason: item.REASON || "사유 없음", // 기본값 설정
+          startDate: item.STARTDATE || "날짜 없음", // 기본값 설정
+          endDate: item.ENDDATE || "날짜 없음", // 기본값 설정
         }));
 
         await AsyncStorage.setItem(
@@ -55,7 +58,6 @@ const Detail = ({ navigation }) => {
 
         // 받아온 데이터를 sleepoverData에 설정
         setSleepoverData(sleepoverDetails);
-        setSleepoverCount(sleepoverDetails.length); // 외박 신청 횟수 설정
       } else {
         console.error("서버로부터 데이터를 가져오지 못했습니다:", data.error);
       }
@@ -70,7 +72,7 @@ const Detail = ({ navigation }) => {
         {/* 외박 신청 버튼 */}
         <TouchableOpacity
           style={styles.tabButton}
-          onPress={() => navigation.navigate("SleepoverDetail")} // 외박 신청 페이지로 이동
+          onPress={() => navigation.navigate("Detail")} // 외박 신청 페이지로 이동
         >
           <Text style={styles.activeTab}>외박 신청</Text>
         </TouchableOpacity>
@@ -132,9 +134,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    marginTop: 20,
+    marginBottom: 15,
+    marginLeft: 10,
+    marginRight: 10,
     paddingBottom: 10,
   },
   headerText: {
@@ -155,30 +158,31 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+    marginBottom: 4,
   },
   dateText: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#333",
   },
   statusText: {
-    fontSize: 14,
+    fontSize: 16,
   },
   pending: {
-    color: "#FF9500", // 대기 중 색상
+    color: "#575757", // 대기 중 색상
   },
   accepted: {
-    color: "#4CD964", // 수락됨 색상
+    color: "#01509F", // 수락됨 색상
   },
   tabButton: {
     paddingVertical: 10,
   },
   activeTab: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#000000", // 활성화된 탭 색상
   },
   inactiveTab: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#B0B0B0", // 비활성화된 탭 색상
   },
 });
