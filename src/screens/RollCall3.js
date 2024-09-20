@@ -63,13 +63,13 @@ const RollCall3 = () => {
           "content-type": "multipart/form-data",
         },
       });
-      const responseText = await response.text(); // 응답을 텍스트로 확인
-      console.log(responseText); // 서버에서 반환한 실제 내용을 로그로 확인
-      console.log(formData);
+      // const responseText = await response.text(); // 응답을 텍스트로 확인
+      // console.log(responseText); // 서버에서 반환한 실제 내용을 로그로 확인
+      // console.log(formData);
       if (response.ok) {
-        const data = JSON.parse(responseText); // 정상일 경우 JSON 파싱
-        console.log(data);
-        Alert.alert("Success", "Photos uploaded successfully");
+        // const data = JSON.parse(responseText); // 정상일 경우 JSON 파싱
+        // console.log(data);
+        navigation.navigate("RollCall4");
       } else {
         Alert.alert("Error", responseText); // 에러일 경우 메시지 알림
       }
@@ -79,7 +79,6 @@ const RollCall3 = () => {
   };
 
   const submitHandler = () => {
-    // navigation.navigate("RollCall4");
     if (level == 0 && imgs[0] && imgs[1]) {
       setLevel(1);
     } else if (level == 1 && imgs[2] && imgs[3]) {
