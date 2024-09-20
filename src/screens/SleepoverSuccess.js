@@ -33,10 +33,7 @@ const SleepoverSuccess = ({ route }) => {
       const data = await response.json();
 
       if (response.ok) {
-        const currentSleepCount = await AsyncStorage.getItem("SLEEPCOUNT");
-        const newSleepCount = parseInt(currentSleepCount, 10) + 1;
         Alert.alert("외박 신청 완료", "외박 신청이 성공적으로 완료되었습니다.");
-        navigation.navigate("Home"); // 신청이 완료되면 홈으로 이동
       } else {
         Alert.alert(
           "신청 실패",

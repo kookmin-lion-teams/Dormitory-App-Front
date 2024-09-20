@@ -11,7 +11,6 @@ const LoginScreen = () => {
   const [stnum, setStnum] = useState("");
   const navigation = useNavigation();
   const handleLogin = async () => {
-    navigation.navigate("Home");
     if (name === "" || stnum === "") {
       Alert.alert("로그인 오류", "사용자 이름과 학번을 입력하세요.");
       return;
@@ -54,8 +53,7 @@ const LoginScreen = () => {
           await AsyncStorage.setItem(
             "STNUM",
             data.student_info.STNUM.toString()
-          await AsyncStorage.setItem("SLEEPOVER", data.student_info.SLEEPOVER.toString());
-          await AsyncStorage.setItem("STNUM", data.student_info.STNUM.toString());
+          );
           await AsyncStorage.setItem(
             "SLEEPCOUNT",
             data.student_info.SLEEPCOUNT.toString()

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import BlueButton from "../components/BlueButton";
 import MediumText from "../components/MediumText";
 import vars from "../vars";
+import { useFocusEffect } from "@react-navigation/native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LocaleConfig.locales["kr"] = {
   monthNames: [
@@ -55,25 +57,30 @@ const SleepoverScreen = ({ navigation, route }) => {
   const [sleepCount, setSleepCount] = useState(0);
   const { reason } = route.params || {};
 
-  useEffect(() => {
-    const fetchSleepCount = async () => {
-      try {
-        const count = await AsyncStorage.getItem("SLEEPCOUNT");
-        if (count !== null) {
-          setSleepCount(parseInt(count, 10)); // 불러온 값을 정수로 변환
-        }
-      } catch (error) {
-        console.error("남은 외박 횟수를 불러오는데 실패했습니다.", error);
-      }
-    };
+  const today = new Date().toISOString().split("T")[0]; // 현재 날짜를 YYYY-MM-DD 형식으로 가져옴
 
-    fetchSleepCount();
-    markSundays(); // 컴포넌트가 렌더링될 때 일요일 표시
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchSleepCount = async () => {
+        try {
+          const count = await AsyncStorage.getItem("SLEEPCOUNT");
+          if (count !== null) {
+            setSleepCount(parseInt(count, 10));
+          } else {
+            setSleepCount(0);
+          }
+        } catch (error) {
+          console.error("남은 외박 횟수를 불러오는데 실패했습니다.", error);
+        }
+      };
+
+      fetchSleepCount();
+      markSundays();
+    }, [])
+  );
 
   const handleDayPress = (day) => {
     if (!startDate || (startDate && endDate)) {
-      // 시작 날짜를 선택하거나 두 번째 클릭 시 범위 재설정
       setStartDate(day.dateString);
       setEndDate(null);
       setSelectedDates({
@@ -84,7 +91,6 @@ const SleepoverScreen = ({ navigation, route }) => {
         },
       });
     } else if (startDate && !endDate) {
-      // 종료 날짜를 선택한 경우
       const newMarkedDates = createMarkedDates(startDate, day.dateString);
       setEndDate(day.dateString);
       setSelectedDates(newMarkedDates);
@@ -111,26 +117,15 @@ const SleepoverScreen = ({ navigation, route }) => {
     return markedDates;
   };
 
-  // 날짜 차이를 계산하는 함수
-  const getDaysBetweenDates = (start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const timeDiff = endDate - startDate;
-    const dayDiff = timeDiff / (1000 * 3600 * 24); // 하루의 밀리초로 나누어 날짜 차이를 계산
-    return dayDiff + 1; // 같은 날짜도 포함해야 하므로 +1
-  };
-
-  // 일요일을 찾아서 빨간색으로 마킹하는 함수
   const markSundays = (markedDates = {}) => {
     const today = new Date();
     const currentYear = today.getFullYear();
 
-    // 현재 연도 전체의 일요일을 계산
     for (let month = 0; month < 12; month++) {
       let date = new Date(currentYear, month, 1);
 
       while (date.getMonth() === month) {
-        if (date.getDay() === 1) {
+        if (date.getDay() === 0) {
           const dateStr = date.toISOString().split("T")[0];
           markedDates[dateStr] = {
             ...markedDates[dateStr],
@@ -144,38 +139,38 @@ const SleepoverScreen = ({ navigation, route }) => {
     setSelectedDates((prevDates) => ({ ...prevDates, ...markedDates }));
   };
 
+  // 날짜 차이를 계산하는 함수 추가
+  const getDaysBetweenDates = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const timeDiff = endDate - startDate;
+    const dayDiff = timeDiff / (1000 * 3600 * 24); // 하루의 밀리초로 나누어 날짜 차이를 계산
+    return dayDiff + 1; // 같은 날짜도 포함해야 하므로 +1
+  };
+
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.headerText}>
-          {" "}
-          외박하고자 하는{"\n"} 날짜를 알려주세요
-        </Text>
+        <Text style={styles.headerText}>외박하고자 하는 날짜를 알려주세요</Text>
       </View>
       <Calendar
         onDayPress={handleDayPress}
         markedDates={selectedDates}
         markingType={"period"}
+        minDate={today} // 현재 날짜 이후로만 선택 가능하게 설정
         theme={{
           selectedDayBackgroundColor: "black",
           arrowColor: "black",
-          textSectionTitleSundayColor: "red",
           textSectionTitleSundayColor: "#C41E3A",
         }}
       />
 
       <View style={styles.messageContainer}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-          }}
-        >
+        <View style={{ display: "flex", flexDirection: "row" }}>
           <Image
-            source={require("../../assets/notice.png")} // 로컬 이미지 불러오기
+            source={require("../../assets/notice.png")}
             style={styles.noticeIcon}
           />
-
           <MediumText style={styles.messageText}>
             {sleepCount >= 3
               ? "이번 학기 외박 신청 횟수를 초과했습니다."
@@ -211,26 +206,28 @@ const SleepoverScreen = ({ navigation, route }) => {
         </View>
       </View>
       {sleepCount < 3 ? (
-        <>
-          <BlueButton
-            style={styles.width}
-            onPress={() => {
-              if (!startDate || !endDate) {
-                Alert.alert("날짜 선택", "외박 일자를 선택하지 않았어요.");
-              } else {
-                navigation.navigate("SleepoverReason", {
-                  startDate,
-                  endDate,
-                  reason,
-                  sleepCount,
-                });
-              }
-            }}
-          >
-            <MediumText style={styles.buttonText}>다 음</MediumText>
-          </BlueButton>
-        </>
-      ) : null}
+        <BlueButton
+          style={styles.width}
+          onPress={() => {
+            if (!startDate || !endDate) {
+              Alert.alert("날짜 선택", "외박 일자를 선택하지 않았어요.");
+            } else {
+              navigation.navigate("SleepoverReason", {
+                startDate,
+                endDate,
+                reason,
+                sleepCount,
+              });
+            }
+          }}
+        >
+          <MediumText style={styles.buttonText}>다 음</MediumText>
+        </BlueButton>
+      ) : (
+        <MediumText style={styles.messageText}>
+          외박 신청이 불가능합니다. 외박 횟수를 초과했습니다.
+        </MediumText>
+      )}
     </View>
   );
 };
@@ -239,7 +236,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   },
@@ -266,7 +262,6 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     backgroundColor: vars.background_color,
-    display: "flex",
     flexDirection: "row",
     width: vars.width_90,
     paddingVertical: 8,
@@ -284,4 +279,5 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
+
 export default SleepoverScreen;
