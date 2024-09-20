@@ -58,6 +58,9 @@ const HomeScreen = () => {
 
           <WhiteButton
             style={styles.halfButton}
+
+            onPress={() => navigation.navigate("")}
+
             onPress={() => navigation.navigate("Sleepover")}
           >
             <BoldText>출입증</BoldText>

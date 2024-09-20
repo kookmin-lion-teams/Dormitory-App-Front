@@ -52,9 +52,22 @@ const SleepoverScreen = ({ navigation, route }) => {
   const [selectedDates, setSelectedDates] = useState({});
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [sleepCount, setSleepCount] = useState(0);
   const { reason } = route.params || {};
 
   useEffect(() => {
+    const fetchSleepCount = async () => {
+      try {
+        const count = await AsyncStorage.getItem("SLEEPCOUNT");
+        if (count !== null) {
+          setSleepCount(parseInt(count, 10)); // 불러온 값을 정수로 변환
+        }
+      } catch (error) {
+        console.error("남은 외박 횟수를 불러오는데 실패했습니다.", error);
+      }
+    };
+
+    fetchSleepCount();
     markSundays(); // 컴포넌트가 렌더링될 때 일요일 표시
   }, []);
 
@@ -162,8 +175,13 @@ const SleepoverScreen = ({ navigation, route }) => {
             source={require("../../assets/notice.png")} // 로컬 이미지 불러오기
             style={styles.noticeIcon}
           />
+
           <MediumText style={styles.messageText}>
-            이번 학기 신청 가능한 외박 횟수가 3회 남았어요.
+            {sleepCount >= 3
+              ? "이번 학기 외박 신청 횟수를 초과했습니다."
+              : `이번 학기 신청 가능한 외박 횟수가 ${
+                  3 - sleepCount
+                }회 남았어요.`}
           </MediumText>
         </View>
       </View>
@@ -192,22 +210,27 @@ const SleepoverScreen = ({ navigation, route }) => {
           </Text>
         </View>
       </View>
-      <BlueButton
-        style={styles.width}
-        onPress={() => {
-          if (!startDate || !endDate) {
-            Alert.alert("날짜 선택", "외박 일자를 선택하지 않았어요.");
-          } else {
-            navigation.navigate("SleepoverReason", {
-              startDate,
-              endDate,
-              reason,
-            });
-          }
-        }}
-      >
-        <MediumText style={styles.buttonText}>다 음</MediumText>
-      </BlueButton>
+      {sleepCount < 3 ? (
+        <>
+          <BlueButton
+            style={styles.width}
+            onPress={() => {
+              if (!startDate || !endDate) {
+                Alert.alert("날짜 선택", "외박 일자를 선택하지 않았어요.");
+              } else {
+                navigation.navigate("SleepoverReason", {
+                  startDate,
+                  endDate,
+                  reason,
+                  sleepCount,
+                });
+              }
+            }}
+          >
+            <MediumText style={styles.buttonText}>다 음</MediumText>
+          </BlueButton>
+        </>
+      ) : null}
     </View>
   );
 };
