@@ -42,7 +42,7 @@ const RollCall2 = () => {
           if (isInDor) {
             try {
               const stnum = await AsyncStorage.getItem("STNUM");
-              const response = await fetch(vars.back + "/student/check", {
+              const response = await fetch(vars.back + "/student/check_in", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -51,8 +51,9 @@ const RollCall2 = () => {
               });
               // const data = await response.json();
               setIsOk(response.ok);
-            } catch (error) {
+            } catch (e) {
               setMsg("점호 내용 확인 중 문제가 발생했습니다.");
+              console.log(e);
             }
           }
           setMsg(
@@ -60,9 +61,11 @@ const RollCall2 = () => {
           );
         } catch (e) {
           setMsg("위치 비교 중 문제가 발생했습니다.");
+          console.log(e);
         }
       } catch (e) {
         setMsg("위치 확인 중 문제가 발생했습니다.");
+        console.log(e);
       } finally {
         setIsLoading(false);
       }
