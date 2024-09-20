@@ -1,16 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Dimensions, Image } from "react-native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
 import WhiteButton from "../components/WhiteButton";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-
+  const [name, setName] = useState();
+  const [room, setRoom] = useState();
+  useEffect(() => {
+    (async () => {
+      const name = await AsyncStorage.getItem("NAME");
+      setName(name);
+      const room = await AsyncStorage.getItem("ROOM");
+      setRoom(room);
+    })();
+  }, []);
   return (
     <View style={styles.container}>
       {/* background logo section */}
@@ -31,14 +41,14 @@ const HomeScreen = () => {
       <View style={styles.profileSection}>
         <View style={styles.width}>
           <View style={styles.nameContainer}>
-            <BoldText style={styles.nameText}>홍길동</BoldText>
+            <BoldText style={styles.nameText}>{name}</BoldText>
             <BoldText style={styles.greetingText}> 님</BoldText>
           </View>
           <BoldText style={styles.greetingText}>안녕하세요!</BoldText>
         </View>
         <View style={styles.width}>
           <BoldText>정릉 생활관</BoldText>
-          <BoldText>101호</BoldText>
+          <BoldText>{room}호</BoldText>
         </View>
       </View>
       {/* button section */}
@@ -48,7 +58,10 @@ const HomeScreen = () => {
 
           <WhiteButton
             style={styles.halfButton}
+
             onPress={() => navigation.navigate("")}
+
+            onPress={() => navigation.navigate("Sleepover")}
           >
             <BoldText>출입증</BoldText>
           </WhiteButton>

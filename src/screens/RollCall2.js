@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import * as Location from "expo-location";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
@@ -13,12 +15,11 @@ const RollCall2 = () => {
   const [msg, setMsg] = useState("");
   const [isIn, setIsIn] = useState(false);
   const navigation = useNavigation(); // navigation 정의
-
+  const [isOk, setIsOk] = useState(false);
   useEffect(() => {
     (async () => {
       setIsLoading(true);
       setMsg("위치를 확인하는 중 입니다.");
-      let isIn = false;
       try {
         // 위치 확인 권한 확인
         let { status } = await Location.requestForegroundPermissionsAsync();
@@ -28,13 +29,35 @@ const RollCall2 = () => {
         }
 
         // 위치 확인
-        let loc = await Location.getCurrentPositionAsync({});
+        // let loc = await Location.getCurrentPositionAsync({});
         // const { lat, lng } = { lat: loc.coords.latitude, lng: loc.coords.longitude };
         const { lat, lng } = { lat: 37.611525, lng: 127.005409 };
 
         try {
           // 위치가 기숙사 안인지 확인
-          isIn = await isPointInTriangle(lat, lng);
+          const isInDor = await isPointInTriangle(lat, lng);
+          setIsIn((prev) => isInDor);
+          console.log(isInDor);
+          //기숙사 안이라면 api 통신
+          if (isInDor) {
+            try {
+              const stnum = await AsyncStorage.getItem("STNUM");
+              const response = await fetch(vars.back + "/student/check", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ stnum }),
+              });
+              // const data = await response.json();
+              setIsOk(response.ok);
+            } catch (error) {
+              setMsg("점호 내용 확인 중 문제가 발생했습니다.");
+            }
+          }
+          setMsg(
+            isInDor ? "위치가 확인되었습니다." : "기숙사 안에서 점호를 진행해주세요"
+          );
         } catch (e) {
           setMsg("위치 비교 중 문제가 발생했습니다.");
         }
@@ -42,12 +65,6 @@ const RollCall2 = () => {
         setMsg("위치 확인 중 문제가 발생했습니다.");
       } finally {
         setIsLoading(false);
-        setIsIn(isIn);
-        if (isIn) {
-          setMsg("홍길동 님의 위치가 확인되었습니다.");
-        } else {
-          setMsg("기숙사 안에서 점호를 진행해주세요");
-        }
       }
     })();
   }, []);
@@ -56,19 +73,13 @@ const RollCall2 = () => {
     <View style={styles.outerContainer}>
       <View style={[styles.width, { marginTop: vars.margin_top }]}>
         <BoldText>{msg}</BoldText>
-        {/* <MediumText>{isIn ? "맞다!" : "아니다!"}</MediumText> */}
       </View>
       <View style={styles.animeContainer}>
-        {isLoading ? (
-          <Image
-            source={require("../../assets/loading.gif")} // 로컬 이미지 불러오기
-            style={styles.loading}
-          />
-        ) : (
-          <></>
+        {isLoading && (
+          <Image source={require("../../assets/loading.gif")} style={styles.loading} />
         )}
       </View>
-      {!isLoading && (
+      {!isLoading && isOk ? (
         <View style={styles.width}>
           <BlueButton style={{ marginBottom: vars.margin_top }}>
             <MediumText
@@ -81,6 +92,8 @@ const RollCall2 = () => {
             </MediumText>
           </BlueButton>
         </View>
+      ) : (
+        <View style={styles.width}></View>
       )}
     </View>
   );
