@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import vars from "../vars";
 import BlueButton from "../components/BlueButton";
@@ -6,6 +6,30 @@ import MediumText from "../components/MediumText";
 
 const SleepoverCheck = ({ navigation, route }) => {
   const { reason, startDate, endDate } = route.params;
+  const [sleepCount, setSleepCount] = useState(0);
+
+  useEffect(() => {
+    const fetchSleepCount = async () => {
+      try {
+        const count = await AsyncStorage.getItem("SLEEPCOUNT");
+        if (count !== null) {
+          setSleepCount(parseInt(count, 10)); // 신청 후 남은 횟수는 1회 감소
+        }
+      } catch (error) {
+        console.error("남은 외박 횟수를 불러오는데 실패했습니다.", error);
+      }
+    };
+
+    fetchSleepCount();
+  }, []);
+
+  const getDaysBetweenDates = (start, end) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const timeDiff = endDate - startDate;
+    const dayDiff = timeDiff / (1000 * 3600 * 24); // 하루의 밀리초로 나누어 날짜 차이를 계산
+    return dayDiff + 1; // 같은 날짜도 포함해야 하므로 +1
+  };
 
   return (
     <View style={styles.container}>
@@ -25,7 +49,11 @@ const SleepoverCheck = ({ navigation, route }) => {
             <Text style={styles.changeText}>변경하기</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.nightsText}>총 9박</Text>
+        <Text style={styles.nightsText}>
+          {startDate && endDate
+            ? `총 ${getDaysBetweenDates(startDate, endDate)}박`
+            : "총 0박"}
+        </Text>
         <Text style={styles.dateText}>
           {startDate && endDate ? `${startDate} ~ ${endDate}` : startDate}
         </Text>
@@ -57,7 +85,7 @@ const SleepoverCheck = ({ navigation, route }) => {
         <MediumText style={styles.noticeText}>
           {" "}
           외박 신청이 완료되면, {"\n"} 이번 학기에 남은 외박 가능 횟수는
-          2회입니다.
+          {3 - sleepCount}회입니다.
         </MediumText>
       </View>
 
