@@ -36,10 +36,10 @@ const RollCall2 = () => {
         try {
           // 위치가 기숙사 안인지 확인
           const isInDor = await isPointInTriangle(lat, lng);
-          setIsIn(isInDor);
-          console.log(isIn);
-          //기숙사 안이라면 api 소통
-          if (isIn) {
+          setIsIn((prev) => isInDor);
+          console.log(isInDor);
+          //기숙사 안이라면 api 통신
+          if (isInDor) {
             try {
               const stnum = await AsyncStorage.getItem("STNUM");
               const response = await fetch(vars.back + "/student/check", {
@@ -49,12 +49,15 @@ const RollCall2 = () => {
                 },
                 body: JSON.stringify({ stnum }),
               });
-              const data = await response.json();
+              // const data = await response.json();
               setIsOk(response.ok);
             } catch (error) {
               setMsg("점호 내용 확인 중 문제가 발생했습니다.");
             }
           }
+          setMsg(
+            isInDor ? "위치가 확인되었습니다." : "기숙사 안에서 점호를 진행해주세요"
+          );
         } catch (e) {
           setMsg("위치 비교 중 문제가 발생했습니다.");
         }
@@ -62,7 +65,6 @@ const RollCall2 = () => {
         setMsg("위치 확인 중 문제가 발생했습니다.");
       } finally {
         setIsLoading(false);
-        setMsg(isIn ? "위치가 확인되었습니다." : "기숙사 안에서 점호를 진행해주세요");
       }
     })();
   }, []);
@@ -73,13 +75,8 @@ const RollCall2 = () => {
         <BoldText>{msg}</BoldText>
       </View>
       <View style={styles.animeContainer}>
-        {isLoading ? (
-          <Image
-            source={require("../../assets/loading.gif")} // 로컬 이미지 불러오기
-            style={styles.loading}
-          />
-        ) : (
-          <></>
+        {isLoading && (
+          <Image source={require("../../assets/loading.gif")} style={styles.loading} />
         )}
       </View>
       {!isLoading && isOk ? (

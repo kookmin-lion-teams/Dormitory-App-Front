@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
 import BlueButton from "../components/BlueButton";
 import CameraExample from "./CameraExample";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RollCall3 = () => {
   const navigation = useNavigation(); // navigation 정의
@@ -32,23 +33,64 @@ const RollCall3 = () => {
     } else if (selectedArea === "배수구") {
       newImgs[3] = photoUri; // photoUri 문자열로 저장
     }
-
     setImgs(newImgs);
   };
+  const uploadPhoto = async () => {
+    const student_number = await AsyncStorage.getItem("STNUM");
+    const room_number = await AsyncStorage.getItem("ROOM");
+    const seat_number = await AsyncStorage.getItem("SEATNUM");
+
+    // FormData 객체 생성
+    const formData = new FormData();
+    formData.append("student_number", student_number);
+    formData.append("room_number", room_number);
+    formData.append("seat_number", seat_number);
+
+    // imgs 배열에 있는 파일을 FormData에 추가
+    imgs.forEach((img, index) => {
+      formData.append("photos", {
+        uri: img.uri,
+        type: img.type || "image/jpeg", // 파일 타입을 설정
+        name: img.fileName || `photo_${index}.jpg`, // 파일 이름을 설정
+      });
+    });
+
+    try {
+      const response = await fetch(vars.back + "/student/upload_clean_photos", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        Alert.alert("Success", "Photos uploaded successfully");
+      } else {
+        Alert.alert("Error", data.error || "Upload failed");
+      }
+    } catch (e) {
+      console.log("err" + e);
+    }
+  };
+
   const submitHandler = () => {
-    navigation.navigate("RollCall4");
-    // if (level == 0 && imgs[0] && imgs[1]) {
-    //   setLevel(1);
-    // } else if (level == 1 && imgs[2] && imgs[3]) {
-    //   // api 요청으로 사진을 보낸 후
-    //   //다음 페이지 RollCall4 로 이동
-    //   // 여기는 api가 나오면 구현할 예정!
-    // } else if (
-    //   (level === 0 && (!imgs[0] || imgs[1])) ||
-    //   (level === 1 && (!imgs[2] || imgs[3]))
-    // ) {
-    //   //사진을 찍지 않고 버튼을 눌렀을때
-    // }
+    // navigation.navigate("RollCall4");
+    if (level == 0 && imgs[0] && imgs[1]) {
+      setLevel(1);
+    } else if (level == 1 && imgs[2] && imgs[3]) {
+      uploadPhoto();
+      // api 요청으로 사진을 보낸 후
+      //다음 페이지 RollCall4 로 이동
+      // 여기는 api가 나오면 구현할 예정!
+    } else if (
+      (level === 0 && (!imgs[0] || !imgs[1])) ||
+      (level === 1 && (!imgs[2] || !imgs[3]))
+    ) {
+      //사진을 찍지 않고 버튼을 눌렀을때
+      Alert.alert("", "사진을 모두 찍어야 합니다.");
+    }
   };
   return isCameraOpen ? (
     <CameraExample onPhotoTaken={onPhotoTaken} /> // 사진을 찍은 후 콜백
