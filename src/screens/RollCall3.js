@@ -36,6 +36,8 @@ const RollCall3 = () => {
     setImgs(newImgs);
   };
   const uploadPhoto = async () => {
+    console.log("api요청 시작");
+
     const student_number = await AsyncStorage.getItem("STNUM");
     const room_number = await AsyncStorage.getItem("ROOM");
     const seat_number = await AsyncStorage.getItem("SEATNUM");
@@ -45,13 +47,11 @@ const RollCall3 = () => {
     formData.append("student_number", student_number);
     formData.append("room_number", room_number);
     formData.append("seat_number", seat_number);
-
-    // imgs 배열에 있는 파일을 FormData에 추가
     imgs.forEach((img, index) => {
       formData.append("photos", {
-        uri: img.uri,
-        type: img.type || "image/jpeg", // 파일 타입을 설정
-        name: img.fileName || `photo_${index}.jpg`, // 파일 이름을 설정
+        uri: imgs[index], // 이미지 URI (file:// 형식)
+        type: "image/jpeg", // MIME 타입
+        name: `photo${index}.jpg`, // 파일 이름
       });
     });
 
@@ -63,12 +63,15 @@ const RollCall3 = () => {
           "content-type": "multipart/form-data",
         },
       });
-      const data = await response.json();
-      console.log(data);
+      const responseText = await response.text(); // 응답을 텍스트로 확인
+      console.log(responseText); // 서버에서 반환한 실제 내용을 로그로 확인
+      console.log(formData);
       if (response.ok) {
+        const data = JSON.parse(responseText); // 정상일 경우 JSON 파싱
+        console.log(data);
         Alert.alert("Success", "Photos uploaded successfully");
       } else {
-        Alert.alert("Error", data.error || "Upload failed");
+        Alert.alert("Error", responseText); // 에러일 경우 메시지 알림
       }
     } catch (e) {
       console.log("err" + e);
