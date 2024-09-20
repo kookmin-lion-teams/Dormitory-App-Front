@@ -39,6 +39,10 @@ const LoginScreen = () => {
           await AsyncStorage.setItem("SID", data.student_info.SID.toString());
           await AsyncStorage.setItem("SLEEPOVER", data.student_info.SLEEPOVER.toString());
           await AsyncStorage.setItem("STNUM", data.student_info.STNUM.toString());
+          await AsyncStorage.setItem(
+            "SLEEPCOUNT",
+            data.student_info.SLEEPCOUNT.toString()
+          );
         } catch (e) {
           console.error("Error saving student info:", e);
         }
