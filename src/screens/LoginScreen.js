@@ -28,17 +28,32 @@ const LoginScreen = () => {
       const data = await response.json();
       if (response.ok) {
         try {
-          await AsyncStorage.setItem("DEPARTMENT", data.student_info.DEPARTMENT);
+          await AsyncStorage.setItem(
+            "DEPARTMENT",
+            data.student_info.DEPARTMENT
+          );
           await AsyncStorage.setItem("IN", data.student_info.IN.toString());
-          await AsyncStorage.setItem("MINUS", data.student_info.MINUS.toString());
+          await AsyncStorage.setItem(
+            "MINUS",
+            data.student_info.MINUS.toString()
+          );
           await AsyncStorage.setItem("NAME", data.student_info.NAME);
           await AsyncStorage.setItem("PHONE", data.student_info.PHONE);
           await AsyncStorage.setItem("ROOM", data.student_info.ROOM);
-          await AsyncStorage.setItem("SEATNUM", data.student_info.SEATNUM.toString());
+          await AsyncStorage.setItem(
+            "SEATNUM",
+            data.student_info.SEATNUM.toString()
+          );
           await AsyncStorage.setItem("SEX", data.student_info.SEX.toString());
           await AsyncStorage.setItem("SID", data.student_info.SID.toString());
-          await AsyncStorage.setItem("SLEEPOVER", data.student_info.SLEEPOVER.toString());
-          await AsyncStorage.setItem("STNUM", data.student_info.STNUM.toString());
+          await AsyncStorage.setItem(
+            "SLEEPOVER",
+            data.student_info.SLEEPOVER.toString()
+          );
+          await AsyncStorage.setItem(
+            "STNUM",
+            data.student_info.STNUM.toString()
+          );
           await AsyncStorage.setItem(
             "SLEEPCOUNT",
             data.student_info.SLEEPCOUNT.toString()
@@ -58,7 +73,10 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/logo-nobg.png")} style={styles.image} />
+      <Image
+        source={require("../../assets/logo-nobg.png")}
+        style={styles.image}
+      />
       <BoldText style={styles.title}>국민대학교 기숙사</BoldText>
       <TextInput
         style={[styles.input, styles.width]}

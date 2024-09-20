@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Dimensions, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Image,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
@@ -21,6 +29,19 @@ const HomeScreen = () => {
       setRoom(room);
     })();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      // 사용자 정보 삭제
+      await AsyncStorage.clear(); // 모든 AsyncStorage 데이터를 삭제
+      Alert.alert("로그아웃", "성공적으로 로그아웃되었습니다.");
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("로그아웃 중 오류 발생: ", error);
+      Alert.alert("오류", "로그아웃 중 문제가 발생했습니다.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* background logo section */}
@@ -45,6 +66,9 @@ const HomeScreen = () => {
             <BoldText style={styles.greetingText}> 님</BoldText>
           </View>
           <BoldText style={styles.greetingText}>안녕하세요!</BoldText>
+          <TouchableOpacity onPress={handleLogout}>
+            <Text style={styles.changeText}>로그아웃</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.width}>
           <BoldText>정릉 생활관</BoldText>
@@ -58,7 +82,9 @@ const HomeScreen = () => {
 
           <WhiteButton
             style={styles.halfButton}
-            onPress={() => navigation.navigate("Sleepover")}
+            onPress={() => navigation.navigate("")}
+
+            // onPress={() => navigation.navigate("Sleepover")}
           >
             <BoldText>출입증</BoldText>
           </WhiteButton>
@@ -78,8 +104,11 @@ const HomeScreen = () => {
             </WhiteButton>
           </View>
         </View>
-        <WhiteButton style={styles.fullWidthButton}>
-          <MediumText>공지사항</MediumText>
+        <WhiteButton
+          style={styles.fullWidthButton}
+          onPress={() => navigation.navigate("Detail")}
+        >
+          <MediumText>신청내역 확인하기</MediumText>
         </WhiteButton>
       </View>
     </View>
@@ -91,6 +120,12 @@ const styles = StyleSheet.create({
     minWidth: width,
     minHeight: "100%",
     maxWidth: width,
+  },
+  changeText: {
+    fontSize: 15,
+    color: "#B3B3B3",
+    textDecorationLine: "underline",
+    marginTop: 15,
   },
   profileSection: {
     zIndex: -10,
