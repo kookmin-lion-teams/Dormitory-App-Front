@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator, // ActivityIndicator 추가
+} from "react-native";
 import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
@@ -15,6 +22,8 @@ const RollCall3 = () => {
   const [selectedArea, setSelectedArea] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [level, setLevel] = useState(0);
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
+
   const clickHandler = (where) => {
     setSelectedArea(where);
     setIsCameraOpen(true); // 카메라를 열도록 설정
@@ -35,14 +44,15 @@ const RollCall3 = () => {
     }
     setImgs(newImgs);
   };
+
   const uploadPhoto = async () => {
+    setLoading(true); // 로딩 상태를 true로 설정하여 스피너 표시
     console.log("api요청 시작");
 
     const student_number = await AsyncStorage.getItem("STNUM");
     const room_number = await AsyncStorage.getItem("ROOM");
     const seat_number = await AsyncStorage.getItem("SEATNUM");
 
-    // FormData 객체 생성
     const formData = new FormData();
     formData.append("student_number", student_number);
     formData.append("room_number", room_number);
@@ -63,57 +73,46 @@ const RollCall3 = () => {
           "content-type": "multipart/form-data",
         },
       });
-      // const responseText = await response.text(); // 응답을 텍스트로 확인
-      // console.log(responseText); // 서버에서 반환한 실제 내용을 로그로 확인
-      // console.log(formData);
+
       if (response.ok) {
-        // const data = JSON.parse(responseText); // 정상일 경우 JSON 파싱
-        // console.log(data);
         navigation.navigate("RollCall4");
       } else {
-        Alert.alert("Error", responseText); // 에러일 경우 메시지 알림
+        Alert.alert("Error", "사진 업로드에 실패했습니다.");
       }
     } catch (e) {
       console.log("err" + e);
+    } finally {
+      setLoading(false); // 로딩 완료 후 스피너 숨기기
     }
   };
 
   const submitHandler = () => {
-    if (level == 0 && imgs[0] && imgs[1]) {
+    if (level === 0 && imgs[0] && imgs[1]) {
       setLevel(1);
-    } else if (level == 1 && imgs[2] && imgs[3]) {
+    } else if (level === 1 && imgs[2] && imgs[3]) {
       uploadPhoto();
-      // api 요청으로 사진을 보낸 후
-      //다음 페이지 RollCall4 로 이동
-      // 여기는 api가 나오면 구현할 예정!
     } else if (
       (level === 0 && (!imgs[0] || !imgs[1])) ||
       (level === 1 && (!imgs[2] || !imgs[3]))
     ) {
-      //사진을 찍지 않고 버튼을 눌렀을때
       Alert.alert("", "사진을 모두 찍어야 합니다.");
     }
   };
+
   return isCameraOpen ? (
     <CameraExample onPhotoTaken={onPhotoTaken} /> // 사진을 찍은 후 콜백
   ) : (
     <View style={styles.outerContainer}>
-      {/* header section */}
+      {/* 화면 터치를 막기 위한 투명한 Overlay */}
+      {loading && (
+        <View style={styles.overlay}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
+
       <View style={[styles.width, { marginTop: vars.margin_top }]}>
         <BoldText>깨끗하게 청소된 구역을</BoldText>
         <BoldText>가이드에 맞춰 촬영해주세요</BoldText>
-      </View>
-      {/* notice section */}
-      <View style={styles.messageContainer}>
-        <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-          <Image
-            source={require("../../assets/notice.png")} // 로컬 이미지 불러오기
-            style={styles.noticeIcon}
-          />
-          <MediumText style={styles.messageText}>
-            청소 상태가 불량할 경우, 담당자가 직접 재점검합니다.
-          </MediumText>
-        </View>
       </View>
       {/* camera section */}
       {level == 0 ? (
@@ -130,6 +129,7 @@ const RollCall3 = () => {
               <TouchableOpacity
                 style={styles.cameraContainer}
                 onPress={() => clickHandler("책상")}
+                disabled={loading} // 로딩 중일 때 터치 비활성화
               >
                 <Image
                   source={require("../../assets/camera.png")}
@@ -149,6 +149,7 @@ const RollCall3 = () => {
               <TouchableOpacity
                 style={styles.cameraContainer}
                 onPress={() => clickHandler("침대")}
+                disabled={loading} // 로딩 중일 때 터치 비활성화
               >
                 <Image
                   source={require("../../assets/camera.png")}
@@ -172,6 +173,7 @@ const RollCall3 = () => {
               <TouchableOpacity
                 style={styles.cameraContainer}
                 onPress={() => clickHandler("바닥")}
+                disabled={loading} // 로딩 중일 때 터치 비활성화
               >
                 <Image
                   source={require("../../assets/camera.png")}
@@ -191,6 +193,7 @@ const RollCall3 = () => {
               <TouchableOpacity
                 style={styles.cameraContainer}
                 onPress={() => clickHandler("배수구")}
+                disabled={loading} // 로딩 중일 때 터치 비활성화
               >
                 <Image
                   source={require("../../assets/camera.png")}
@@ -204,7 +207,7 @@ const RollCall3 = () => {
 
       {/* button section */}
       <View style={[styles.width, { marginBottom: vars.margin_top }]}>
-        <BlueButton onPress={submitHandler}>
+        <BlueButton onPress={submitHandler} disabled={loading}>
           <MediumText style={styles.buttonText}>다음</MediumText>
         </BlueButton>
       </View>
@@ -221,21 +224,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  buttonText: { color: "white", textAlign: "center", fontSize: 16 },
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // 반투명 배경
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1, // 스피너를 위에 표시
+  },
   width: {
     width: vars.width_90,
   },
-  messageContainer: {
-    backgroundColor: vars.background_color,
-    display: "flex",
-    flexDirection: "column",
-    width: vars.width_90,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    borderRadius: vars.button_radius,
-  },
-  noticeIcon: { width: 15, height: 15, marginRight: 10 },
-  buttonText: { color: "white", textAlign: "center", fontSize: 16 },
-  messageText: { color: vars.message_color },
   smallText: { fontSize: 16 },
   cameraContainer: {
     width: "100%",
