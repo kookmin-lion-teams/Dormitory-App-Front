@@ -36,7 +36,7 @@ const fetchFonts = () => {
   });
 };
 
-export default function App() {
+ function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
@@ -59,17 +59,17 @@ export default function App() {
           headerStyle: { backgroundColor: "white" }, // 헤더 배경색
           contentStyle: { backgroundColor: "white" }, // 전체 화면 배경색
         }}
-      >
+      ><Stack.Screen
+      name="Home"
+      component={HomeScreen}
+      options={{ title: "", headerShown: false }}
+    />
         <Stack.Screen
           name="Login"
           component={LoginScreen}
           options={{ title: "", headerShown: false }}
         />
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: "", headerShown: false }}
-        />
+        
         <Stack.Screen
           name="Sleepover"
           component={SleepoverScreen}
@@ -130,3 +130,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+
+export default require('./.storybook').default;
+// export default App;

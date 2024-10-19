@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+
 import vars from "../vars";
 import MediumText from "../components/MediumText";
 import BoldText from "../components/BoldText";
@@ -45,7 +46,6 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       {/* background logo section */}
-
       <Image
         source={require("../../assets/logo.png")}
         style={{

@@ -1,5 +1,6 @@
-{
-  "expo": {
+module.exports = {
+  
+ 
     "name": "root",
     "slug": "root",
     "version": "1.0.0",
@@ -42,8 +43,8 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "5697e011-b394-4563-a9c0-170d4dea832f"
+        "projectId": "5697e011-b394-4563-a9c0-170d4dea832f",        
       }
     }
-  }
+  
 }
